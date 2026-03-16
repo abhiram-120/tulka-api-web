@@ -7,33 +7,39 @@ const multerS3 = require('multer-s3');
 const AWS = require('aws-sdk');
 const config = require('../../config/config');
 
-AWS.config.update({
-    accessKeyId: config.AWS_ACCESS_KEY_ID,
-    secretAccessKey: config.AWS_SECRET_ACCESS_KEY,
-    region: 'eu-central-1'
-});
+const hasS3Config = Boolean(config.AWS_BUCKET && config.AWS_ACCESS_KEY_ID && config.AWS_SECRET_ACCESS_KEY);
 
-const s3 = new AWS.S3();
+if (hasS3Config) {
+    AWS.config.update({
+        accessKeyId: config.AWS_ACCESS_KEY_ID,
+        secretAccessKey: config.AWS_SECRET_ACCESS_KEY,
+        region: 'eu-central-1'
+    });
+}
+
+const s3 = hasS3Config ? new AWS.S3() : null;
 
 // Configure multer for announcement images
 const uploadAnnouncementImage = multer({
     limits: {
         fileSize: 10 * 1024 * 1024 // 10MB limit for images
     },
-    storage: multerS3({
-        s3: s3,
-        bucket: config.AWS_BUCKET,
-        acl: 'public-read',
-        contentType: multerS3.AUTO_CONTENT_TYPE,
-        metadata: function (req, file, cb) {
-            cb(null, { fieldName: file.fieldname });
-        },
-        key: function (req, file, cb) {
-            const timestamp = Date.now();
-            const extension = file.originalname.split('.').pop();
-            cb(null, `announcements/images/${timestamp}-${file.originalname}`);
-        }
-    }),
+    storage: hasS3Config
+        ? multerS3({
+            s3: s3,
+            bucket: config.AWS_BUCKET,
+            acl: 'public-read',
+            contentType: multerS3.AUTO_CONTENT_TYPE,
+            metadata: function (req, file, cb) {
+                cb(null, { fieldName: file.fieldname });
+            },
+            key: function (req, file, cb) {
+                const timestamp = Date.now();
+                const extension = file.originalname.split('.').pop();
+                cb(null, `announcements/images/${timestamp}-${file.originalname}`);
+            }
+        })
+        : multer.memoryStorage(),
     fileFilter: function (req, file, cb) {
         // Only allow image files
         if (file.mimetype.startsWith('image/')) {

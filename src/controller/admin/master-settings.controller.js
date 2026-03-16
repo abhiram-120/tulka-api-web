@@ -10,29 +10,35 @@ const multerS3 = require('multer-s3');
 const AWS = require('aws-sdk');
 const config = require('../../config/config'); // Your AWS credentials source
 
-AWS.config.update({
-    accessKeyId: config.AWS_ACCESS_KEY_ID,
-    secretAccessKey: config.AWS_SECRET_ACCESS_KEY,
-    region: 'eu-central-1'
-});
+const hasS3Config = Boolean(config.AWS_BUCKET && config.AWS_ACCESS_KEY_ID && config.AWS_SECRET_ACCESS_KEY);
 
-const s3 = new AWS.S3();
+if (hasS3Config) {
+    AWS.config.update({
+        accessKeyId: config.AWS_ACCESS_KEY_ID,
+        secretAccessKey: config.AWS_SECRET_ACCESS_KEY,
+        region: 'eu-central-1'
+    });
+}
+
+const s3 = hasS3Config ? new AWS.S3() : null;
 
 const upload = multer({
-    storage: multerS3({
-        s3: s3,
-        bucket: config.AWS_BUCKET,
-        acl: 'public-read',
-        metadata: (req, file, cb) => {
-            cb(null, { fieldName: file.fieldname });
-        },
-        key: (req, file, cb) => {
-            const folder = 'settings';
-            const timestamp = Date.now();
-            const filename = `${folder}/${file.fieldname}-${timestamp}-${file.originalname}`;
-            cb(null, filename);
-        }
-    }),
+    storage: hasS3Config
+        ? multerS3({
+            s3: s3,
+            bucket: config.AWS_BUCKET,
+            acl: 'public-read',
+            metadata: (req, file, cb) => {
+                cb(null, { fieldName: file.fieldname });
+            },
+            key: (req, file, cb) => {
+                const folder = 'settings';
+                const timestamp = Date.now();
+                const filename = `${folder}/${file.fieldname}-${timestamp}-${file.originalname}`;
+                cb(null, filename);
+            }
+        })
+        : multer.memoryStorage(),
     limits: { fileSize: 5 * 1024 * 1024 },
     fileFilter: (req, file, cb) => {
         if (file.mimetype.startsWith('image/')) cb(null, true);

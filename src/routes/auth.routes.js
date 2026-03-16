@@ -9,31 +9,37 @@ const AWS = require('aws-sdk');
 const AWS_REGION = 'eu-central-1';
 const multerS3 = require('multer-s3');
 
-AWS.config.update({
-    accessKeyId: config.AWS_ACCESS_KEY_ID,
-    secretAccessKey: config.AWS_SECRET_ACCESS_KEY,
-    region: AWS_REGION
-});
+const hasS3Config = Boolean(config.AWS_BUCKET && config.AWS_ACCESS_KEY_ID && config.AWS_SECRET_ACCESS_KEY);
 
-const s3 = new AWS.S3();
+if (hasS3Config) {
+    AWS.config.update({
+        accessKeyId: config.AWS_ACCESS_KEY_ID,
+        secretAccessKey: config.AWS_SECRET_ACCESS_KEY,
+        region: AWS_REGION
+    });
+}
+
+const s3 = hasS3Config ? new AWS.S3() : null;
 
 // upload homework's files
 const upload = multer({
-    storage: multerS3({
-        s3: s3,
-        bucket: config.AWS_BUCKET,
-        acl: 'public-read-write', // Set ACL
-        metadata: function (req, file, cb) {
-            cb(null, { fieldName: file.fieldname });
-        },
-        key: function (req, file, cb) {
-            cb(
-                null,
-                'profile-images/' + 'avatar/' + file.originalname
-                // "profile-images/" + file.originalname
-            );
-        }
-    })
+    storage: hasS3Config
+        ? multerS3({
+            s3: s3,
+            bucket: config.AWS_BUCKET,
+            acl: 'public-read-write', // Set ACL
+            metadata: function (req, file, cb) {
+                cb(null, { fieldName: file.fieldname });
+            },
+            key: function (req, file, cb) {
+                cb(
+                    null,
+                    'profile-images/' + 'avatar/' + file.originalname
+                    // "profile-images/" + file.originalname
+                );
+            }
+        })
+        : multer.memoryStorage()
 });
 
 router.post('/student-register', authController.registerStudent);
