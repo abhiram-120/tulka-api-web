@@ -1,4 +1,4 @@
-const AudioBroadcast = require('../../models/AudioBroadcast');
+const AudioBroadcast = require('../../models/audioBroadcast');
 const { Op } = require('sequelize');
 const { sequelize } = require('../../connection/connection');
 const path = require('path');
