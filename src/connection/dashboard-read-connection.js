@@ -1,4 +1,5 @@
 const Sequelize = require('sequelize');
+const mysql2 = require('mysql2');
 const { sequelize } = require('./connection');
 require('dotenv').config();
 
@@ -15,6 +16,7 @@ if (useLiveDashboardDb) {
             host: process.env.DASHBOARD_DB_HOST,
             port: Number(process.env.DASHBOARD_DB_PORT || 3306),
             dialect: 'mysql',
+            dialectModule: mysql2,
             pool: { max: 5, min: 0, idle: 1000 },
             logging: false,
         }

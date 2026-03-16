@@ -1,4 +1,5 @@
 const Sequelize = require('sequelize');
+const mysql2 = require('mysql2');
 const config = require('../config/config');
 
 const sequelize = new Sequelize(
@@ -9,6 +10,7 @@ const sequelize = new Sequelize(
         host: config.host,
         port: Number(process.env.DB_PORT || 3306),
         dialect: 'mysql',
+        dialectModule: mysql2,
         pool: { max: 5, min: 0, idle: 1000 },
         logging: false,
     }
