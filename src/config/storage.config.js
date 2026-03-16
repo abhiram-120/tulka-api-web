@@ -1,16 +1,23 @@
 const path = require('path');
 
+const isVercelRuntime = Boolean(process.env.VERCEL);
+const storageRoot = process.env.STORAGE_ROOT
+    ? process.env.STORAGE_ROOT
+    : isVercelRuntime
+        ? path.join('/tmp', 'tulkka-storage')
+        : path.join(__dirname, '..', 'storage');
+
 module.exports = {
     // Storage paths
     paths: {
-        storage: path.join(__dirname, '..', 'storage'),
-        avatar: path.join(__dirname, '..', 'storage', 'avatar'),  // Single avatar directory
-        avatars: path.join(__dirname, '..', 'storage', 'avatars'),
-        video: path.join(__dirname, '..', 'storage', 'videos'),
-        thumbnail: path.join(__dirname, '..', 'storage', 'thumbnails'),
-        temp: path.join(__dirname, '..', 'storage', 'temp'),
-        homework: path.join(__dirname, '..', 'storage', 'homework'),       // Homework files directory
-        evaluation: path.join(__dirname, '..', 'storage', 'evaluations')   // Evaluations directory
+        storage: storageRoot,
+        avatar: path.join(storageRoot, 'avatar'),  // Single avatar directory
+        avatars: path.join(storageRoot, 'avatars'),
+        video: path.join(storageRoot, 'videos'),
+        thumbnail: path.join(storageRoot, 'thumbnails'),
+        temp: path.join(storageRoot, 'temp'),
+        homework: path.join(storageRoot, 'homework'),       // Homework files directory
+        evaluation: path.join(storageRoot, 'evaluations')   // Evaluations directory
     },
 
     // File upload limits

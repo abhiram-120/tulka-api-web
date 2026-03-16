@@ -4,7 +4,9 @@ const path = require('path');
 const moment = require('moment-timezone');
 
 // Setup logging directory
-const logsDir = path.join(__dirname, '../logs');
+const logsDir = process.env.VERCEL
+    ? path.join('/tmp', 'tulkka-logs')
+    : path.join(__dirname, '../logs');
 const payplusUpdateLogsDir = path.join(logsDir, 'payplus-updates');
 
 /**
