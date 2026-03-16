@@ -18,7 +18,11 @@ const adminStudentsPortalRoutes = require('./admin/students-portal.routes');
 const adminPaymentTransactionsRoutes = require('./admin/payment-transactions.routes');
 const adminTrialTransferRoutes = require('./admin/trial-transfer.routes');
 const adminQuestionBankRoutes = require('./admin/question-bank.routes');
-const adminAudioBroadcastsRoutes = require('./admin/audio-broadcasts.routes');
+// NOTE: Audio broadcasts are disabled in the Railway deploy because the
+// corresponding model file is not present there and would crash the server.
+// For local/dev where the model exists, you can re-enable this require and
+// its route mapping below.
+// const adminAudioBroadcastsRoutes = require('./admin/audio-broadcasts.routes');
 const adminUserPlanRoutes = require('./admin/user-plan.routes');
 const adminClassManagementRoutes = require('./admin/class-management.routes');
 const adminTranzilaNotificationRoutes = require('./admin/tranzila-notifications.routes');
@@ -124,7 +128,8 @@ router.use('/adminSubscriptions', adminSubscriptionRoutes);
 router.use('/adminPayments', adminPaymentTransactionsRoutes);
 router.use('/adminTrialTransfers', adminTrialTransferRoutes);
 router.use('/adminQuestionBank', adminQuestionBankRoutes);
-router.use('/adminAudioBroadcasts', adminAudioBroadcastsRoutes);
+// Audio broadcast routes temporarily disabled for cloud deploy stability.
+// router.use('/adminAudioBroadcasts', adminAudioBroadcastsRoutes);
 router.use('/adminUserPlans', adminUserPlanRoutes);
 router.use('/adminClasses', adminClassManagementRoutes);
 router.use('/adminTranzilaNotifications', adminTranzilaNotificationRoutes);
