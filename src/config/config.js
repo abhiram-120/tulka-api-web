@@ -52,9 +52,19 @@ const { error, value: envVars } = envVarsSchema.validate(process.env);
   //  throw new Error(`Config validation error: ${error}`);
 //}
 
+const isRailwayDeployment = Boolean(
+    process.env.RAILWAY_ENVIRONMENT ||
+    process.env.RAILWAY_ENVIRONMENT_NAME ||
+    process.env.RAILWAY_PROJECT_ID ||
+    process.env.RAILWAY_SERVICE_ID ||
+    process.env.RAILWAY_PUBLIC_DOMAIN
+);
+
+const resolvedPort = isRailwayDeployment ? 8000 : envVars.PORT;
+
 const config = {
     env: envVars.NODE_ENV,
-    port: envVars.PORT,
+    port: resolvedPort,
     jwtSecret: envVars.JWT_SECRET_KEY,
 
     // database connection information

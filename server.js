@@ -72,6 +72,6 @@ app.use("/api", apiRouter);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 // Server listening
-app.listen(config.port, () => {
+app.listen(config.port, '0.0.0.0', () => {
     console.log(`Server listening on the port no https://localhost:${config.port}`);
 });
