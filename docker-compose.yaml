@@ -1,0 +1,14 @@
+version: '3.8' # Use the latest version of Docker Compose
+
+services:
+    api:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        image: tulkka-backend-img:1.0.0
+        ports:
+            - '6060:6060'
+        volumes:
+            - .:/tulkka-backend
+        environment:
+            API_KEY: my-api-key
