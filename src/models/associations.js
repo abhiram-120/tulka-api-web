@@ -80,10 +80,14 @@ const StudentActivity = require('./StudentActivity');
 const UserNotification = require('./UserNotification');
 // const GameOption = require('./game-option');
 // const GameOptionItem = require('./gameOptionItem');
-
-
+let associationsInitialized = false;
 
 const setupAssociations = () => {
+    if (associationsInitialized) {
+        return;
+    }
+    associationsInitialized = true;
+
     // Each salary profile belongs to one teacher (user)
     TeacherSalaryProfile.belongsTo(User, {
         foreignKey: 'teacher_id',

@@ -4,7 +4,9 @@ const path = require('path');
 const moment = require('moment');
 
 // Setup logging directories
-const logsDir = path.join(__dirname, '../logs');
+const logsDir = process.env.VERCEL
+    ? path.join('/tmp', 'tulkka-logs')
+    : path.join(__dirname, '../logs');
 const webhookLogsDir = path.join(logsDir, 'webhooks');
 const paymentLinksDir = path.join(logsDir, 'payment-links');
 
